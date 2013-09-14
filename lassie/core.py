@@ -92,12 +92,12 @@ class Lassie(object):
         }
 
         if open_graph:
-            data.update(self._filter_meta_data('open_graph', soup, data))
+            data.update(self._filter_meta_data('open_graph', soup, data, url))
 
         if twitter_card:
-            data.update(self._filter_meta_data('twitter_card', soup, data))
+            data.update(self._filter_meta_data('twitter_card', soup, data, url))
 
-        data.update(self._filter_meta_data('generic', soup, data))
+        data.update(self._filter_meta_data('generic', soup, data, url))
 
         if touch_icon:
             data.update(self._filter_link_tag_data('touch_icon', soup, data, url))
@@ -165,7 +165,8 @@ class Lassie(object):
                     value = value.split(',')
 
                 if image_prop and prop.startswith(image_prop) and value:
-                    image[meta_map[prop]] = value
+                    image[meta_map[prop]] = value \
+                        if value.startswith(u'http' or u'www') else urljoin(url, value)
                 elif video_prop and prop.startswith(video_prop) and value:
                     video[meta_map[prop]] = value
                 else:
